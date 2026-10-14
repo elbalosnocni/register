@@ -63,6 +63,7 @@ function lookupAthlete_(cccd) {
 
 function registerRelatives_(data) {
   if (!data || typeof data !== 'object') throw new Error('Dữ liệu đăng ký không hợp lệ.');
+  if (data.consent !== true) throw new Error('Bạn cần đồng ý điều khoản bảo mật trước khi gửi đăng ký.');
   const cccd = normalizeCccd_(data.cccd);
   if (!/^\d{12}$/.test(cccd)) throw new Error('CCCD phải gồm đúng 12 chữ số.');
   const athlete = lookupAthlete_(cccd);
@@ -73,16 +74,19 @@ function registerRelatives_(data) {
   const clean = relatives.map(function(r) {
     const name = cleanText_(r && r.name, 120);
     const relation = cleanText_(r && r.relation, 40);
+    const phone = normalizePhone_(r && r.phone);
+    const relativeCccd = normalizeCccd_(r && r.cccd);
     if (!name) throw new Error('Họ tên người thân không được để trống.');
     if (allowedRelations.indexOf(relation) < 0) throw new Error('Quan hệ người thân không hợp lệ.');
-    return { name: name, relation: relation };
+    if (!/^0\d{9,10}$/.test(phone)) throw new Error('Số điện thoại người thân phải gồm 10 hoặc 11 chữ số và bắt đầu bằng số 0.');
+    if (!/^\d{12}$/.test(relativeCccd)) throw new Error('CCCD người thân phải gồm đúng 12 chữ số.');
+    return { name: name, relation: relation, phone: phone, cccd: relativeCccd };
   });
-  // Tránh nhập cùng một người thân hai lần trong cùng biểu mẫu.
+  // Không cho trùng CCCD người thân trong cùng danh sách.
   const seen = {};
   clean.forEach(function(r) {
-    const key = (r.name + '|' + r.relation).toLocaleLowerCase('vi');
-    if (seen[key]) throw new Error('Danh sách có người thân bị trùng: ' + r.name + '.');
-    seen[key] = true;
+    if (seen[r.cccd]) throw new Error('CCCD người thân bị trùng trong danh sách: ' + r.cccd + '.');
+    seen[r.cccd] = true;
   });
 
   const props = PropertiesService.getScriptProperties();
@@ -92,7 +96,9 @@ function registerRelatives_(data) {
   const lock = LockService.getScriptLock();
   lock.waitLock(20000);
   try {
-    const sheet = getSheet_(SHEET_REGISTRATIONS, ['Thời gian cập nhật', 'CCCD', 'Họ tên VĐV', 'Bộ phận', 'Họ tên người thân', 'Quan hệ']);
+    const headers = ['Thời gian cập nhật', 'CCCD VĐV', 'Họ tên VĐV', 'Bộ phận', 'Họ tên người thân', 'Quan hệ', 'Số điện thoại người thân', 'CCCD người thân', 'Đồng ý điều khoản', 'Thời điểm đồng ý'];
+    const sheet = getSheet_(SHEET_REGISTRATIONS, headers);
+    ensureHeaders_(sheet, headers);
     const values = sheet.getDataRange().getDisplayValues();
     // Ghi danh sách mới trước để tránh mất danh sách cũ nếu thao tác ghi thất bại.
     // Sau khi ghi thành công mới xóa các dòng cũ của CCCD này, từ dưới lên.
@@ -101,8 +107,8 @@ function registerRelatives_(data) {
       if (normalizeCccd_(values[i][1]) === cccd) oldRows.push(i + 1);
     }
     const timestamp = new Date();
-    const rows = clean.map(function(r) { return [timestamp, "'" + cccd, athlete.name, athlete.dept, r.name, r.relation]; });
-    sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, 6).setValues(rows);
+    const rows = clean.map(function(r) { return [timestamp, "'" + cccd, athlete.name, athlete.dept, r.name, r.relation, "'" + r.phone, "'" + r.cccd, 'Có', timestamp]; });
+    sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
     for (let j = oldRows.length - 1; j >= 0; j--) sheet.deleteRow(oldRows[j]);
     return { success: true, status: 'success', message: 'Đã cập nhật danh sách người thân.', count: rows.length };
   } finally {
@@ -119,7 +125,7 @@ function adminLogin_(password) {
   }
   if (hashPassword_(password) !== storedHash) return { success: false, message: 'Mật khẩu quản trị không đúng.' };
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const reg = getSheet_(SHEET_REGISTRATIONS, ['Thời gian cập nhật', 'CCCD', 'Họ tên VĐV', 'Bộ phận', 'Họ tên người thân', 'Quan hệ']);
+  const reg = getSheet_(SHEET_REGISTRATIONS, ['Thời gian cập nhật', 'CCCD VĐV', 'Họ tên VĐV', 'Bộ phận', 'Họ tên người thân', 'Quan hệ', 'Số điện thoại người thân', 'CCCD người thân', 'Đồng ý điều khoản', 'Thời điểm đồng ý']);
   const data = reg.getDataRange().getDisplayValues();
   const deptStats = {};
   const athletes = {};
@@ -160,9 +166,23 @@ function getSheet_(name, headers) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   let sheet = ss.getSheetByName(name);
   if (!sheet) sheet = ss.insertSheet(name);
-  if (sheet.getLastRow() === 0) sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  if (sheet.getLastRow() === 0 && headers && headers.length) sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  if (headers && headers.length) ensureHeaders_(sheet, headers);
   return sheet;
 }
+function ensureHeaders_(sheet, headers) {
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    return;
+  }
+  const width = Math.max(sheet.getLastColumn(), headers.length);
+  const current = sheet.getRange(1, 1, 1, width).getDisplayValues()[0];
+  headers.forEach(function(header, i) {
+    if (!String(current[i] || '').trim()) sheet.getRange(1, i + 1).setValue(header);
+  });
+}
+function normalizePhone_(value) { return String(value == null ? '' : value).replace(/[\s().-]/g, '').trim(); }
+
 function normalizeCccd_(value) { return String(value == null ? '' : value).replace(/^'/, '').replace(/\s+/g, '').trim(); }
 function cleanText_(value, max) { return String(value == null ? '' : value).replace(/[<>\u0000-\u001F]/g, '').trim().slice(0, max); }
 function hashPassword_(password) {
