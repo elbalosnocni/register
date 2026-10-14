@@ -3,77 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Trị Hệ Thống - Hội Thao Liwayway 2026</title>
+    <title>Trang Quản Trị Hệ Thống - Hội thao Liwayway 2026</title>
     <script src="https://jsdelivr.net"></script>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen font-sans py-10">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans py-10">
 
-    <!-- BƯỚC 1: ĐĂNG NHẬP -->
-    <div id="adminLoginView" class="w-full max-w-sm mx-auto px-4 mt-12">
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 space-y-4">
-            <div class="text-center">
-                <span class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hội Thao Liwayway 2026</span>
-                <h2 class="text-2xl font-black text-slate-900 mt-2">🔒 Đăng nhập Admin</h2>
-            </div>
+    <!-- Nút về lại trang chủ -->
+    <div class="absolute top-4 right-4">
+        <a href="index.html" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-lg transition shadow-sm">
+            🏠 Về Trang Đăng Ký
+        </a>
+    </div>
+
+    <!-- MÀN HÌNH ĐĂNG NHẬP ADMIN -->
+    <div id="adminLoginView" class="w-full max-w-sm mx-auto px-4 mt-20">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 space-y-4">
+            <h2 class="text-xl font-bold text-center text-slate-900">🔒 Quản trị hệ thống</h2>
+            <p class="text-xs text-slate-400 text-center">Vui lòng nhập mật khẩu quản trị chuyên dụng</p>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Mật khẩu quản trị *</label>
-                <input type="password" id="adminPasswordInput" placeholder="Mật khẩu ban đầu: Hoadaquy" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none">
+                <label class="block text-sm font-medium text-slate-700 mb-1">Mật khẩu admin *</label>
+                <input type="password" id="adminPasswordInput" placeholder="Mật khẩu mặc định: Hoadaquy" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none">
             </div>
-            <button onclick="handleAdminLogin()" id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">Xác nhận</button>
-            <div class="text-center pt-2">
-                <a href="index.html" class="text-xs text-slate-500 hover:underline">← Về trang đăng ký công khai</a>
-            </div>
+            <button onclick="handleAdminLogin()" id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">Xác nhận Đăng nhập</button>
         </div>
     </div>
 
-    <!-- BƯỚC 2: DASHBOARD QUẢN TRỊ (MẶC ĐỊNH ẨN) -->
+    <!-- MÀN HÌNH DASHBOARD TRUNG TÂM -->
     <div id="adminDashboardView" class="hidden w-full max-w-4xl mx-auto px-4">
-        <header class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-            <div>
-                <h1 class="text-2xl font-black text-slate-900">📊 Hệ Thống Quản Trị Trung Tâm</h1>
-                <p class="text-slate-500 text-sm mt-0.5">Quản lý thời gian, mật khẩu và xem báo cáo dữ liệu trực tiếp</p>
-            </div>
-            <button onclick="logoutAdmin()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer self-start sm:self-center">
-                🚪 Đăng xuất
-            </button>
+        <header class="mb-6">
+            <h1 class="text-2xl font-black text-slate-900">📊 Hệ Thống Quản Trị Trung Tâm</h1>
+            <p class="text-slate-500 text-sm">Quản lý cấu hình giới hạn thời gian và theo dõi số liệu báo cáo</p>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- CẤU HÌNH HỆ THỐNG -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 h-fit">
-                <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-1.5">⚙️ Cấu hình</h3>
+            <!-- CẤU HÌNH THỜI GIAN & BẢO MẬT -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4 h-fit">
+                <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-1.5">⚙️ Cấu hình hệ thống</h3>
                 <div class="space-y-3 text-sm">
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1">Hạn đóng khóa đăng ký</label>
                         <input type="datetime-local" id="configDeadline" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1">Đổi mật khẩu quản trị mới</label>
-                        <input type="password" id="configPassword" placeholder="Bỏ trống nếu giữ nguyên" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Mật khẩu quản trị mới</label>
+                        <input type="password" id="configPassword" placeholder="Để trống nếu không muốn đổi" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button onclick="saveSystemConfig()" id="btnSaveConfig" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-lg transition cursor-pointer shadow-sm">Lưu Thay Đổi</button>
+                    <button onclick="saveSystemConfig()" id="btnSaveConfig" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition cursor-pointer">Lưu Thay Đổi</button>
                 </div>
             </div>
 
-            <!-- DASHBOARD THỐNG KÊ -->
+            <!-- HIỂN THỊ THỐNG KÊ BIỂU ĐỒ SỐ LIỆU -->
             <div class="md:col-span-2 space-y-6">
-                <!-- Số liệu nhanh -->
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gradient-to-br from-indigo-600 to-blue-600 text-white p-5 rounded-2xl shadow-sm">
-                        <span class="text-xs opacity-80 block font-medium uppercase tracking-wider">Người thân cổ vũ</span>
-                        <span id="statTotalRelatives" class="text-4xl font-black block mt-1">0</span>
+                    <div class="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-4 rounded-2xl shadow-sm">
+                        <span class="text-xs opacity-80 block font-medium">Tổng số Người Thân cổ vũ</span>
+                        <span id="statTotalRelatives" class="text-3xl font-black block mt-1">0</span>
                     </div>
-                    <div class="bg-gradient-to-br from-emerald-600 to-teal-600 text-white p-5 rounded-2xl shadow-sm">
-                        <span class="text-xs opacity-80 block font-medium uppercase tracking-wider">VĐV Đã Bảo Lãnh</span>
-                        <span id="statTotalAthletes" class="text-4xl font-black block mt-1">0</span>
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4 rounded-2xl shadow-sm">
+                        <span class="text-xs opacity-80 block font-medium">Tổng số VĐV đã bảo lãnh</span>
+                        <span id="statTotalAthletes" class="text-3xl font-black block mt-1">0</span>
                     </div>
                 </div>
 
-                <!-- Thống kê Bộ phận -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-3 mb-3 flex items-center gap-1.5">🏢 Số lượng đăng ký theo bộ phận</h3>
-                    <div id="deptStatsContainer" class="space-y-2 text-sm divide-y divide-slate-100">
-                        <!-- Nội dung render động -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                    <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-3 mb-3">🏢 Phân bổ số lượng người thân theo Bộ phận</h3>
+                    <div id="deptStatsContainer" class="space-y-2 text-sm divide-y divide-slate-50">
+                        <!-- Tự động cập nhật bằng script -->
                     </div>
                 </div>
             </div>
@@ -81,14 +76,14 @@
     </div>
 
     <script>
-        // THAY LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
+        // ĐIỀN LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY (GIỐNG LINK TRANG INDEX)
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ_E3CP4x0j8t4EGfSws34cn4vN5y4qsfibUGTpE2zvutdj2biQdCyfw2EW2QopxP8sg/exec';
-        
         let currentAdminPassword = '';
 
+        // Xử lý đăng nhập Admin
         function handleAdminLogin() {
             const pwd = document.getElementById('adminPasswordInput').value.trim();
-            if(!pwd) { alert('Vui lòng điền mật khẩu!'); return; }
+            if(!pwd) { alert('Vui lòng điền mật khẩu quản trị!'); return; }
 
             const loginBtn = document.getElementById('loginBtn');
             loginBtn.disabled = true; loginBtn.innerText = 'Đang kiểm tra bảo mật...';
@@ -105,50 +100,45 @@
                         const container = document.getElementById('deptStatsContainer');
                         container.innerHTML = '';
                         if (Object.keys(data.stats.deptStats).length === 0) {
-                            container.innerHTML = `<p class="text-slate-400 italic py-4 text-center">Chưa có dữ liệu người thân đăng ký.</p>`;
+                            container.innerHTML = `<p class="text-slate-400 italic py-2 text-center">Chưa ghi nhận dữ liệu đăng ký.</p>`;
                         } else {
                             for (const [dept, count] of Object.entries(data.stats.deptStats)) {
-                                container.innerHTML += `<div class="flex justify-between py-3 items-center">
-                                    <span class="font-semibold text-slate-700">${dept}</span>
-                                    <span class="bg-slate-100 text-slate-800 font-bold px-3 py-1 rounded-xl text-xs">${count} người thân</span>
+                                container.innerHTML += `<div class="flex justify-between py-2.5">
+                                    <span class="font-medium text-slate-700">${dept}</span>
+                                    <span class="bg-slate-100 text-slate-800 font-bold px-3 py-0.5 rounded-full text-xs">${count} người thân</span>
                                 </div>`;
                             }
                         }
+                        // Chuyển đổi màn hình ẩn form đăng nhập hiện Dashboard
                         document.getElementById('adminLoginView').classList.add('hidden');
                         document.getElementById('adminDashboardView').classList.remove('hidden');
                     } else {
                         alert(data.message);
                     }
                 })
-                .catch(() => alert('Lỗi đồng bộ dữ liệu với Google Sheets!'))
-                .finally(() => { loginBtn.disabled = false; loginBtn.innerText = 'Xác nhận'; });
+                .catch(() => alert('Lỗi tải dữ liệu quản trị từ Google Sheets!'))
+                .finally(() => { loginBtn.disabled = false; loginBtn.innerText = 'Xác nhận Đăng nhập'; });
         }
 
+        // Xử lý lưu cấu hình thời gian và mật khẩu mới
         function saveSystemConfig() {
             const newDeadline = document.getElementById('configDeadline').value;
             const newPassword = document.getElementById('configPassword').value.trim();
             const btn = document.getElementById('btnSaveConfig');
 
-            btn.disabled = true; btn.innerText = 'Đang ghi nhận...';
+            btn.disabled = true; btn.innerText = 'Đang tiến hành lưu...';
 
             fetch(SCRIPT_URL, {
                 method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'updateConfig', adminPassword: currentAdminPassword, newDeadline: newDeadline, newPassword: newPassword })
             })
             .then(() => {
-                alert('Cập nhật thành công! Hệ thống Sheets đã đồng bộ cấu hình mới.');
-                if(newPassword) currentAdminPassword = newPassword;
+                alert('Cấu hình hệ thống đã cập nhật thành công!');
+                if(newPassword) currentAdminPassword = newPassword; 
                 document.getElementById('configPassword').value = '';
             })
-            .catch(() => alert('Lỗi lưu cấu hình hệ thống!'))
+            .catch(() => alert('Gặp lỗi kết nối khi lưu dữ liệu!'))
             .finally(() => { btn.disabled = false; btn.innerText = 'Lưu Thay Đổi'; });
-        }
-
-        function logoutAdmin() {
-            currentAdminPassword = '';
-            document.getElementById('adminPasswordInput').value = '';
-            document.getElementById('adminDashboardView').classList.add('hidden');
-            document.getElementById('adminLoginView').classList.remove('hidden');
         }
     </script>
 </body>
