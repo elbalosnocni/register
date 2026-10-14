@@ -6,7 +6,14 @@
     <title>Đăng Ký Người Thân Cổ Vũ - Hội Thao Liwayway 2026</title>
     <script src="https://jsdelivr.net"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex items-center justify-center py-10">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex items-center justify-center py-10 relative">
+
+    <!-- Liên kết ẩn sang trang quản trị -->
+    <div class="absolute top-4 right-4">
+        <a href="admin.html" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold px-3 py-1.5 rounded-lg transition">
+            🔒 Trang Quản Trị
+        </a>
+    </div>
 
     <div class="w-full max-w-xl mx-auto px-4">
         <!-- Header -->
@@ -17,39 +24,49 @@
         </header>
 
         <!-- FORM CHÍNH -->
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
             
-            <!-- BƯỚC 1: TRA CỨU CCCD -->
+            <!-- Bước 1: Tra cứu CCCD -->
             <div id="stepLookup" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Nhập số Căn cước công dân (CCCD) VĐV *</label>
-                    <input type="text" id="searchCccd" pattern="[0-9]{12}" title="Vui lòng nhập đúng 12 số CCCD" placeholder="Nhập 12 số CCCD để tra cứu" 
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition text-center font-mono text-lg tracking-wider">
+                    <input type="text" id="searchCccd" pattern="[0-9]{12}" placeholder="Nhập 12 số CCCD để tra cứu" 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-center font-mono text-lg tracking-wider">
                 </div>
                 <button type="button" id="btnLookup" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl transition cursor-pointer">
                     Kiểm Tra Thông Tin VĐV
                 </button>
             </div>
 
-            <!-- BƯỚC 2: THÔNG TIN VÀ ĐĂNG KÝ NGƯỜI THÂN (MẶC ĐỊNH ẨN) -->
-            <form id="registrationForm" class="hidden space-y-6">
-                <!-- Box thông tin VĐV tự động điền -->
-                <div class="bg-red-50/50 border border-red-100 rounded-xl p-4 space-y-2">
-                    <div class="flex justify-between border-b border-red-100/50 pb-2">
-                        <span class="text-sm text-slate-500">VĐV Bảo Lãnh:</span>
-                        <span id="txtAthleteName" class="font-bold text-slate-900 text-right">-</span>
-                    </div>
-                    <div class="flex justify-between border-b border-red-100/50 pb-2">
-                        <span class="text-sm text-slate-500">Bộ phận:</span>
-                        <span id="txtAthleteDept" class="font-semibold text-slate-700 text-right">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-slate-500">Số CCCD:</span>
-                        <span id="txtAthleteCccd" class="font-mono text-slate-600 text-right">-</span>
-                    </div>
+            <!-- Bước 2: Hiển thị thông tin & Đồng ý bảo mật -->
+            <div id="stepPrivacy" class="hidden space-y-5">
+                <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2">Thông tin tìm thấy</h3>
+                <div class="bg-slate-50 border border-slate-200/60 rounded-xl p-4 space-y-2 text-sm">
+                    <div class="flex justify-between"><span class="text-slate-500">Họ và tên VĐV:</span><span id="previewName" class="font-bold text-slate-900">-</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Bộ phận làm việc:</span><span id="previewDept" class="font-semibold text-slate-700">-</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Số CCCD VĐV:</span><span id="previewCccd" class="font-mono text-slate-600">-</span></div>
                 </div>
 
-                <!-- Danh sách người thân -->
+                <!-- Khung điều khoản bảo mật -->
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-900 space-y-3">
+                    <p class="font-bold uppercase tracking-wider text-blue-900">📋 Điều khoản bảo mật thông tin:</p>
+                    <p class="leading-relaxed">Bạn có đồng ý cung cấp thông tin trên để BCH Công Đoàn thu thập làm dữ liệu để đăng ký hệ thống vào cổng công ty Liwayway?</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="cancelPrivacy()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-3 rounded-xl text-sm transition cursor-pointer">Từ chối</button>
+                    <button type="button" onclick="acceptPrivacy()" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md text-sm transition cursor-pointer">Tôi Đồng Ý</button>
+                </div>
+            </div>
+
+            <!-- Bước 3: Điền thông tin người thân -->
+            <form id="registrationForm" class="hidden space-y-6">
+                <!-- Tóm tắt tài khoản -->
+                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-xs text-emerald-800 flex justify-between items-center">
+                    <span>Đang đăng ký dưới tư cách VĐV: <strong id="txtAthleteName"></strong> (<span id="txtAthleteDept"></span>)</span>
+                    <span class="bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-md uppercase tracking-wider scale-90">Đã xác thực</span>
+                </div>
+
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
                         <h2 class="text-md font-bold text-slate-900">Danh sách người thân cổ vũ</h2>
@@ -57,18 +74,17 @@
                             + Thêm người
                         </button>
                     </div>
-
                     <div id="relativesContainer" class="space-y-3">
-                        <!-- Hàng mẫu đầu tiên -->
+                        <!-- Hàng nhập đầu tiên -->
                         <div class="relative-row bg-slate-50 p-3.5 rounded-xl border border-slate-100 relative group">
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <div class="sm:col-span-2">
                                     <label class="block text-xs font-medium text-slate-500 mb-1">Họ & tên người thân *</label>
-                                    <input type="text" required placeholder="Nhập họ tên" class="relative-name w-full px-3 py-1.5 bg-white rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    <input type="text" required placeholder="Nhập họ tên" class="relative-name w-full px-3 py-1.5 bg-white rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-red-500 outline-none">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-slate-500 mb-1">Quan hệ *</label>
-                                    <select required class="relative-relation w-full px-3 py-1.5 bg-white rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    <select required class="relative-relation w-full px-3 py-1.5 bg-white rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-red-500 outline-none">
                                         <option value="">-- Chọn --</option>
                                         <option value="Bố/Mẹ">Bố/Mẹ</option>
                                         <option value="Vợ/Chồng">Vợ/Chồng</option>
@@ -78,98 +94,93 @@
                                     </select>
                                 </div>
                             </div>
-                            <button type="button" onclick="removeRelative(this)" class="remove-btn hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full text-[10px] font-bold items-center justify-center shadow hover:bg-red-600 transition cursor-pointer">✕</button>
+                            <button type="button" onclick="removeRelative(this)" class="remove-btn hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full text-[10px] font-bold items-center justify-center shadow hover:bg-red-600 transition">✕</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Điều hướng điều khiển -->
                 <div class="flex gap-3 pt-2">
-                    <button type="button" id="btnBack" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-3 px-4 rounded-xl transition cursor-pointer text-sm">
-                        Quay lại
-                    </button>
-                    <button type="submit" id="submitBtn" class="w-2/3 bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transition cursor-pointer text-sm">
-                        Xác Nhận Đăng Ký
-                    </button>
+                    <button type="button" onclick="cancelRegistration()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-3 rounded-xl text-sm transition cursor-pointer">Hủy</button>
+                    <button type="submit" id="submitBtn" class="w-2/3 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-3 rounded-xl shadow-md text-sm transition cursor-pointer">Xác Nhận Đăng Ký</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        // THAY LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
+        // ĐIỀN LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ_E3CP4x0j8t4EGfSws34cn4vN5y4qsfibUGTpE2zvutdj2biQdCyfw2EW2QopxP8sg/exec';
-
-        // Khai báo các biến lưu trữ cục bộ dữ liệu tra cứu thành công
+        
         let activeAthlete = { cccd: '', name: '', dept: '' };
 
         const stepLookup = document.getElementById('stepLookup');
+        const stepPrivacy = document.getElementById('stepPrivacy');
         const registrationForm = document.getElementById('registrationForm');
         const searchCccd = document.getElementById('searchCccd');
         const btnLookup = document.getElementById('btnLookup');
-        const btnBack = document.getElementById('btnBack');
-        
         const relativesContainer = document.getElementById('relativesContainer');
         const addRelativeBtn = document.getElementById('addRelativeBtn');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Sự kiện click nút Tra Cứu CCCD
+        // Bấm kiểm tra CCCD
         btnLookup.addEventListener('click', () => {
             const cccdValue = searchCccd.value.trim();
-            if (cccdValue.length !== 12 || isNaN(cccdValue)) {
-                alert('Vui lòng nhập đúng định dạng 12 chữ số CCCD!');
-                return;
-            }
+            if (cccdValue.length !== 12 || isNaN(cccdValue)) { alert('Vui lòng nhập đúng 12 chữ số CCCD!'); return; }
 
             btnLookup.disabled = true;
-            btnLookup.innerText = 'Đang tra cứu hệ thống...';
+            btnLookup.innerText = 'Đang kiểm tra hệ thống...';
 
-            // Gửi yêu cầu GET để lấy thông tin VĐV từ Sheet DanhSachVDV
-            fetch(`${SCRIPT_URL}?cccd=${cccdValue}`)
-                .then(response => response.json())
+            fetch(`${SCRIPT_URL}?action=lookupAthlete&cccd=${cccdValue}`)
+                .then(res => res.json())
                 .then(data => {
+                    if (data.error === 'expired') { alert(data.message); return; }
                     if (data.found) {
-                        // Điền thông tin vào form
-                        activeAthlete.cccd = cccdValue;
-                        activeAthlete.name = data.name;
-                        activeAthlete.dept = data.dept;
+                        activeAthlete = { cccd: cccdValue, name: data.name, dept: data.dept };
+                        
+                        // Đưa dữ liệu vào bước hiển thị thông tin
+                        document.getElementById('previewName').innerText = data.name;
+                        document.getElementById('previewDept').innerText = data.dept;
+                        document.getElementById('previewCccd').innerText = cccdValue.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3');
 
-                        document.getElementById('txtAthleteName').innerText = data.name;
-                        document.getElementById('txtAthleteDept').innerText = data.dept;
-                        document.getElementById('txtAthleteCccd').innerText = cccdValue.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3');
-
-                        // Chuyển đổi màn hình giao diện form nhập
+                        // Chuyển sang màn hình hỏi quyền bảo mật thông tin
                         stepLookup.classList.add('hidden');
-                        registrationForm.classList.remove('hidden');
+                        stepPrivacy.classList.remove('hidden');
                     } else {
-                        alert('Không tìm thấy số CCCD này trên hệ thống VĐV Hội Thao Liwayway 2026. Vui lòng kiểm tra lại!');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Lỗi kết nối máy chủ dữ liệu Google Sheets!');
-                })
-                .finally(() => {
-                    btnLookup.disabled = false;
-                    btnLookup.innerText = 'Kiểm Tra Thông Tin VĐV';
-                });
-        });
+alert('Không tìm thấy số CCCD này trên hệ thống VĐV Hội Thao Liwayway 2026!');
+}
+})
+.catch(() => alert('Lỗi kết nối máy chủ Google Sheets!'))
+.finally(() => { btnLookup.disabled = false; btnLookup.innerText = 'Kiểm Tra Thông Tin VĐV'; });
+});
+// Xử lý từ chối điều khoản bảo mật
+function cancelPrivacy() {
+alert('Bạn đã từ chối điều khoản bảo mật thông tin. Hệ thống không thể tiếp tục đăng ký người thân.');
+stepPrivacy.classList.add('hidden');
+stepLookup.classList.remove('hidden');
+searchCccd.value = '';
+}
+// Xử lý đồng ý điều khoản bảo mật
+function acceptPrivacy() {
+document.getElementById('txtAthleteName').innerText = activeAthlete.name;
+document.getElementById('txtAthleteDept').innerText = activeAthlete.dept;
+stepPrivacy.classList.add('hidden');
+registrationForm.classList.remove('hidden');
+}
+// Hủy bỏ toàn bộ quá trình điền thông tin người thân
+function cancelRegistration() {
+registrationForm.classList.add('hidden');
+stepLookup.classList.remove('hidden');
+registrationForm.reset();
+searchCccd.value = '';
+relativesContainer.innerHTML = '';
+addRelativeBtn.click();
+}
+// Quản lý các dòng người thân thêm mới
+addRelativeBtn.addEventListener('click', () => {
+const newRow = document.createElement('div');
+newRow.className = 'relative-row bg-slate-50 p-3.5 rounded-xl border border-slate-100 relative group';
+newRow.innerHTML = `
 
-        // Nút quay lại bước tra cứu
-        btnBack.addEventListener('click', () => {
-            registrationForm.classList.add('hidden');
-            stepLookup.classList.remove('hidden');
-            registrationForm.reset();
-            relativesContainer.innerHTML = '';
-            addRelativeBtn.click();
-        });
-
-        // Logic xử lý thêm hàng người thân
-        addRelativeBtn.addEventListener('click', () => {
-            const newRow = document.createElement('div');
-            newRow.className = 'relative-row bg-slate-50 p-3.5 rounded-xl border border-slate-100 relative group';
-            newRow.innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
 Họ & tên người thân *
 Quan hệ *
 -- Chọn --
@@ -183,58 +194,33 @@ Bạn bè / Khác
 
 ✕
 `;
-relativesContainer.appendChild(newRow);
-updateRemoveButtons();
+relativesContainer.appendChild(newRow); updateRemoveButtons();
 });
-window.removeRelative = function(btn) {
-btn.closest('.relative-row').remove();
-updateRemoveButtons();
-}
+window.removeRelative = function(btn) { btn.closest('.relative-row').remove(); updateRemoveButtons(); }
 function updateRemoveButtons() {
 const rows = relativesContainer.getElementsByClassName('relative-row');
 const removeButtons = relativesContainer.getElementsByClassName('remove-btn');
-if (rows.length === 1) {
-removeButtons[0].classList.add('hidden');
-} else {
-for (let btn of removeButtons) { btn.classList.remove('hidden'); }
+if (rows.length === 1) { removeButtons.classList.add('hidden'); }
+else { for (let btn of removeButtons) { btn.classList.remove('hidden'); } }
 }
-}
-// Thực hiện Submit lưu dữ liệu đăng ký người thân lên Google Sheet
+// Đẩy form lưu lên Google Sheet
 registrationForm.addEventListener('submit', (e) => {
 e.preventDefault();
-submitBtn.disabled = true;
-submitBtn.innerText = 'Đang gửi dữ liệu đăng ký...';
+submitBtn.disabled = true; submitBtn.innerText = 'Đang gửi dữ liệu đăng ký...';
 const relativeRows = relativesContainer.getElementsByClassName('relative-row');
 const relativesData = [];
 for (let row of relativeRows) {
-const name = row.querySelector('.relative-name').value;
-const relation = row.querySelector('.relative-relation').value;
-relativesData.push({ name, relation });
+relativesData.push({ name: row.querySelector('.relative-name').value, relation: row.querySelector('.relative-relation').value });
 }
-const payload = {
-cccd: activeAthlete.cccd,
-athleteName: activeAthlete.name,
-athleteDept: activeAthlete.dept,
-relatives: relativesData
-};
 fetch(SCRIPT_URL, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(payload)
+method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ action: 'register', cccd: activeAthlete.cccd, athleteName: activeAthlete.name, athleteDept: activeAthlete.dept, relatives: relativesData })
 })
 .then(() => {
 alert('Chúc mừng! Đăng ký thông tin người thân thành công.');
-btnBack.click(); // Reset và quay lại trang tra cứu ban đầu
-searchCccd.value = '';
+cancelRegistration();
 })
-.catch(error => {
-console.error('Lỗi:', error);
-alert('Có lỗi xảy ra khi gửi dữ liệu lên Google Sheet.');
-})
-.finally(() => {
-submitBtn.disabled = false;
-submitBtn.innerText = 'Xác Nhận Đăng Ký';
+.catch(() => alert('Có lỗi xảy ra khi kết nối.'))
+.finally(() => { submitBtn.disabled = false; submitBtn.innerText = 'Xác Nhận Đăng Ký'; });
 });
-});
-
+updateRemoveButtons();
