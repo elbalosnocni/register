@@ -24,6 +24,7 @@ function doGet(e) {
   try {
     const action = String(p.action || 'lookup');
     if (action === 'lookup') result = lookupAthlete_(p.cccd);
+    else if (action === 'listRelatives') result = listRelatives_(p.cccd);
     else if (action === 'register') result = registerRelatives_(JSON.parse(String(p.payload || '{}')));
     else if (action === 'adminLogin') result = adminLogin_(String(p.password || ''));
     else if (action === 'updateConfig') result = updateConfig_(p);
@@ -59,6 +60,31 @@ function lookupAthlete_(cccd) {
     }
   }
   return { found: false, message: 'Không tìm thấy CCCD trong danh sách VĐV.' };
+}
+
+/** Trả về danh sách người thân theo CCCD VĐV đã xác thực; CCCD người thân luôn được che, chỉ hiện 3 số cuối. */
+function listRelatives_(cccd) {
+  cccd = normalizeCccd_(cccd);
+  if (!/^\d{12}$/.test(cccd)) return { success: false, message: 'CCCD phải gồm đúng 12 chữ số.' };
+  const athlete = lookupAthlete_(cccd);
+  if (!athlete.found) return { success: false, message: 'Không tìm thấy CCCD trong danh sách VĐV.' };
+  const headers = ['Thời gian cập nhật', 'CCCD VĐV', 'Họ tên VĐV', 'Bộ phận', 'Họ tên người thân', 'Quan hệ', 'Số điện thoại người thân', 'CCCD người thân', 'Đồng ý điều khoản', 'Thời điểm đồng ý'];
+  const sheet = getSheet_(SHEET_REGISTRATIONS, headers);
+  const data = sheet.getDataRange().getDisplayValues();
+  const relatives = [];
+  let updatedAt = '';
+  for (let i = 1; i < data.length; i++) {
+    if (normalizeCccd_(data[i][1]) !== cccd || !String(data[i][4] || '').trim()) continue;
+    const rawCccd = normalizeCccd_(data[i][7]);
+    relatives.push({
+      name: String(data[i][4] || '').trim(),
+      relation: String(data[i][5] || '').trim(),
+      phone: String(data[i][6] || '').trim().replace(/^'/, ''),
+      cccdMasked: rawCccd.length >= 3 ? '•••••••••' + rawCccd.slice(-3) : '••••••••••••'
+    });
+    updatedAt = String(data[i][0] || updatedAt);
+  }
+  return { success: true, athlete: { name: athlete.name, dept: athlete.dept, cccdMasked: '•••••••••' + cccd.slice(-3) }, relatives: relatives, count: relatives.length, updatedAt: updatedAt };
 }
 
 function registerRelatives_(data) {
