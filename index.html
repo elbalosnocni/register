@@ -1,226 +1,85 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng Ký Người Thân Cổ Vũ - Hội Thao Liwayway 2026</title>
-    <script src="https://jsdelivr.net"></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Ký Người Thân Cổ Vũ - Hội Thao Liwayway 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex items-center justify-center py-10 relative">
-
-    <!-- Liên kết ẩn sang trang quản trị -->
-    <div class="absolute top-4 right-4">
-        <a href="admin.html" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold px-3 py-1.5 rounded-lg transition">
-            🔒 Trang Quản Trị
-        </a>
-    </div>
-
-    <div class="w-full max-w-xl mx-auto px-4">
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <span class="bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hội Thao Liwayway 2026</span>
-            <h1 class="text-2xl font-extrabold text-slate-900 mt-2">Đăng Ký Người Thân Cổ Vũ</h1>
-            <p class="text-slate-500 text-sm mt-1">Vui lòng xác thực tài khoản VĐV trước khi đăng ký</p>
-        </header>
-
-        <!-- FORM CHÍNH -->
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
-            
-            <!-- Bước 1: Tra cứu CCCD -->
-            <div id="stepLookup" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Nhập số Căn cước công dân (CCCD) VĐV *</label>
-                    <input type="text" id="searchCccd" pattern="[0-9]{12}" placeholder="Nhập 12 số CCCD để tra cứu" 
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-center font-mono text-lg tracking-wider">
-                </div>
-                <button type="button" id="btnLookup" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl transition cursor-pointer">
-                    Kiểm Tra Thông Tin VĐV
-                </button>
-            </div>
-
-            <!-- Bước 2: Hiển thị thông tin & Đồng ý bảo mật -->
-            <div id="stepPrivacy" class="hidden space-y-5">
-                <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2">Thông tin tìm thấy</h3>
-                <div class="bg-slate-50 border border-slate-200/60 rounded-xl p-4 space-y-2 text-sm">
-                    <div class="flex justify-between"><span class="text-slate-500">Họ và tên VĐV:</span><span id="previewName" class="font-bold text-slate-900">-</span></div>
-                    <div class="flex justify-between"><span class="text-slate-500">Bộ phận làm việc:</span><span id="previewDept" class="font-semibold text-slate-700">-</span></div>
-                    <div class="flex justify-between"><span class="text-slate-500">Số CCCD VĐV:</span><span id="previewCccd" class="font-mono text-slate-600">-</span></div>
-                </div>
-
-                <!-- Khung điều khoản bảo mật -->
-                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-xs text-blue-900 space-y-3">
-                    <p class="font-bold uppercase tracking-wider text-blue-900">📋 Điều khoản bảo mật thông tin:</p>
-                    <p class="leading-relaxed">Bạn có đồng ý cung cấp thông tin trên để BCH Công Đoàn thu thập làm dữ liệu để đăng ký hệ thống vào cổng công ty Liwayway?</p>
-                </div>
-
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="cancelPrivacy()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-3 rounded-xl text-sm transition cursor-pointer">Từ chối</button>
-                    <button type="button" onclick="acceptPrivacy()" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-md text-sm transition cursor-pointer">Tôi Đồng Ý</button>
-                </div>
-            </div>
-
-            <!-- Bước 3: Điền thông tin người thân -->
-            <form id="registrationForm" class="hidden space-y-6">
-                <!-- Tóm tắt tài khoản -->
-                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-xs text-emerald-800 flex justify-between items-center">
-                    <span>Đang đăng ký dưới tư cách VĐV: <strong id="txtAthleteName"></strong> (<span id="txtAthleteDept"></span>)</span>
-                    <span class="bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded-md uppercase tracking-wider scale-90">Đã xác thực</span>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-                        <h2 class="text-md font-bold text-slate-900">Danh sách người thân cổ vũ</h2>
-                        <button type="button" id="addRelativeBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition cursor-pointer">
-                            + Thêm người
-                        </button>
-                    </div>
-                    <div id="relativesContainer" class="space-y-3">
-                        <!-- Hàng nhập đầu tiên -->
-                        <div class="relative-row bg-slate-50 p-3.5 rounded-xl border border-slate-100 relative group">
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <div class="sm:col-span-2">
-                                    <label class="block text-xs font-medium text-slate-500 mb-1">Họ & tên người thân *</label>
-                                    <input type="text" required placeholder="Nhập họ tên" class="relative-name w-full px-3 py-1.5 bg-white rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-red-500 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-500 mb-1">Quan hệ *</label>
-                                    <select required class="relative-relation w-full px-3 py-1.5 bg-white rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-red-500 outline-none">
-                                        <option value="">-- Chọn --</option>
-                                        <option value="Bố/Mẹ">Bố/Mẹ</option>
-                                        <option value="Vợ/Chồng">Vợ/Chồng</option>
-                                        <option value="Con">Con</option>
-                                        <option value="Anh/Chị/Em">Anh/Chị/Em</option>
-                                        <option value="Khác">Bạn bè / Khác</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="button" onclick="removeRelative(this)" class="remove-btn hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white w-5 h-5 rounded-full text-[10px] font-bold items-center justify-center shadow hover:bg-red-600 transition">✕</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="cancelRegistration()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-3 rounded-xl text-sm transition cursor-pointer">Hủy</button>
-                    <button type="submit" id="submitBtn" class="w-2/3 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-3 rounded-xl shadow-md text-sm transition cursor-pointer">Xác Nhận Đăng Ký</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // ĐIỀN LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ_E3CP4x0j8t4EGfSws34cn4vN5y4qsfibUGTpE2zvutdj2biQdCyfw2EW2QopxP8sg/exec';
-        
-        let activeAthlete = { cccd: '', name: '', dept: '' };
-
-        const stepLookup = document.getElementById('stepLookup');
-        const stepPrivacy = document.getElementById('stepPrivacy');
-        const registrationForm = document.getElementById('registrationForm');
-        const searchCccd = document.getElementById('searchCccd');
-        const btnLookup = document.getElementById('btnLookup');
-        const relativesContainer = document.getElementById('relativesContainer');
-        const addRelativeBtn = document.getElementById('addRelativeBtn');
-        const submitBtn = document.getElementById('submitBtn');
-
-        // Bấm kiểm tra CCCD
-        btnLookup.addEventListener('click', () => {
-            const cccdValue = searchCccd.value.trim();
-            if (cccdValue.length !== 12 || isNaN(cccdValue)) { alert('Vui lòng nhập đúng 12 chữ số CCCD!'); return; }
-
-            btnLookup.disabled = true;
-            btnLookup.innerText = 'Đang kiểm tra hệ thống...';
-
-            fetch(`${SCRIPT_URL}?action=lookupAthlete&cccd=${cccdValue}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error === 'expired') { alert(data.message); return; }
-                    if (data.found) {
-                        activeAthlete = { cccd: cccdValue, name: data.name, dept: data.dept };
-                        
-                        // Đưa dữ liệu vào bước hiển thị thông tin
-                        document.getElementById('previewName').innerText = data.name;
-                        document.getElementById('previewDept').innerText = data.dept;
-                        document.getElementById('previewCccd').innerText = cccdValue.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3');
-
-                        // Chuyển sang màn hình hỏi quyền bảo mật thông tin
-                        stepLookup.classList.add('hidden');
-                        stepPrivacy.classList.remove('hidden');
-                    } else {
-alert('Không tìm thấy số CCCD này trên hệ thống VĐV Hội Thao Liwayway 2026!');
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex items-center justify-center py-10">
+  <main class="w-full max-w-xl mx-auto px-4">
+    <header class="text-center mb-8"><span class="bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Hội Thao Liwayway 2026</span><h1 class="text-2xl font-extrabold text-slate-900 mt-3">Đăng Ký Người Thân Cổ Vũ</h1><p class="text-slate-500 text-sm mt-1">Vui lòng xác thực tài khoản VĐV trước khi đăng ký</p></header>
+    <section class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
+      <div id="statusMessage" role="status" aria-live="polite" class="hidden mb-4 rounded-xl p-3 text-sm"></div>
+      <div id="stepLookup" class="space-y-4">
+        <div><label for="searchCccd" class="block text-sm font-medium mb-1.5">Nhập số Căn cước công dân (CCCD) VĐV *</label><input type="text" id="searchCccd" inputmode="numeric" autocomplete="off" maxlength="12" pattern="[0-9]{12}" title="Vui lòng nhập đúng 12 số CCCD" placeholder="Nhập 12 số CCCD để tra cứu" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 text-center font-mono text-lg tracking-wider"></div>
+        <button type="button" id="btnLookup" class="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl">Kiểm Tra Thông Tin VĐV</button>
+      </div>
+      <form id="registrationForm" class="hidden space-y-6">
+        <div class="bg-red-50 border border-red-100 rounded-xl p-4 space-y-2"><div class="flex justify-between gap-4 border-b border-red-100 pb-2"><span class="text-sm text-slate-500">VĐV Bảo Lãnh:</span><strong id="txtAthleteName" class="text-right">-</strong></div><div class="flex justify-between gap-4 border-b border-red-100 pb-2"><span class="text-sm text-slate-500">Bộ phận:</span><strong id="txtAthleteDept" class="text-right">-</strong></div><div class="flex justify-between gap-4"><span class="text-sm text-slate-500">Số CCCD:</span><span id="txtAthleteCccd" class="font-mono text-right">-</span></div><p class="text-xs text-slate-500">Nếu đã đăng ký trước đó, gửi danh sách mới sẽ cập nhật danh sách cũ, không tạo bản ghi trùng.</p></div>
+        <section><div class="flex justify-between items-center mb-4 pb-2 border-b"><h2 class="font-bold">Danh sách người thân cổ vũ</h2><button type="button" id="addRelativeBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg">+ Thêm người</button></div><div id="relativesContainer" class="space-y-3"></div><p class="text-xs text-slate-500 mt-2">Tối đa 30 người thân trong một lần đăng ký.</p></section>
+        <div class="flex gap-3 pt-2"><button type="button" id="btnBack" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-medium py-3 px-4 rounded-xl text-sm">Quay lại</button><button type="submit" id="submitBtn" class="w-2/3 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-3 px-4 rounded-xl text-sm disabled:opacity-50">Xác Nhận Đăng Ký</button></div>
+      </form>
+    </section>
+    <p class="text-center text-xs text-slate-400 mt-5">Nếu thông tin VĐV không chính xác, vui lòng liên hệ Ban tổ chức.</p>
+  </main>
+<script>
+'use strict';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ_E3CP4x0j8t4EGfSws34cn4vN5y4qsfibUGTpE2zvutdj2biQdCyfw2EW2QopxP8sg/exec';
+let activeAthlete = null;
+const $ = id => document.getElementById(id);
+const stepLookup = $('stepLookup'), form = $('registrationForm'), cccdInput = $('searchCccd'), lookupBtn = $('btnLookup');
+const relativesContainer = $('relativesContainer'), addBtn = $('addRelativeBtn'), submitBtn = $('submitBtn');
+function showMessage(message, type='error') {
+  const el = $('statusMessage'); el.textContent = message; el.className = 'mb-4 rounded-xl p-3 text-sm ' + (type === 'success' ? 'bg-emerald-50 text-emerald-800' : type === 'info' ? 'bg-blue-50 text-blue-800' : 'bg-red-50 text-red-800');
 }
-})
-.catch(() => alert('Lỗi kết nối máy chủ Google Sheets!'))
-.finally(() => { btnLookup.disabled = false; btnLookup.innerText = 'Kiểm Tra Thông Tin VĐV'; });
+function clearMessage() { $('statusMessage').className = 'hidden mb-4 rounded-xl p-3 text-sm'; $('statusMessage').textContent = ''; }
+function jsonp(params, timeoutMs=20000) {
+  return new Promise((resolve, reject) => {
+    const callbackName = '__api_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script'); const query = new URLSearchParams({...params, callback: callbackName});
+    let settled = false;
+    const cleanup = () => { delete window[callbackName]; script.remove(); clearTimeout(timer); };
+    const timer = setTimeout(() => { if (!settled) { settled = true; cleanup(); reject(new Error('Máy chủ phản hồi quá thời gian. Vui lòng thử lại.')); } }, timeoutMs);
+    window[callbackName] = data => { if (settled) return; settled = true; cleanup(); resolve(data); };
+    script.onerror = () => { if (!settled) { settled = true; cleanup(); reject(new Error('Không kết nối được Google Apps Script.')); } };
+    script.src = SCRIPT_URL + '?' + query.toString(); document.head.appendChild(script);
+  });
+}
+function createRelativeRow(name='', relation='') {
+  const row = document.createElement('div'); row.className = 'relative-row bg-slate-50 p-3.5 rounded-xl border border-slate-100 relative';
+  const grid = document.createElement('div'); grid.className = 'grid grid-cols-1 sm:grid-cols-3 gap-3';
+  const nameWrap = document.createElement('div'); nameWrap.className = 'sm:col-span-2';
+  const nameLabel = document.createElement('label'); nameLabel.className = 'block text-xs font-medium text-slate-500 mb-1'; nameLabel.textContent = 'Họ & tên người thân *';
+  const nameInput = document.createElement('input'); nameInput.type = 'text'; nameInput.required = true; nameInput.maxLength = 120; nameInput.placeholder = 'Nhập họ tên'; nameInput.value = name; nameInput.className = 'relative-name w-full px-3 py-2 bg-white rounded-lg border border-slate-200 text-sm';
+  nameWrap.append(nameLabel, nameInput);
+  const relWrap = document.createElement('div'); const relLabel = document.createElement('label'); relLabel.className = 'block text-xs font-medium text-slate-500 mb-1'; relLabel.textContent = 'Quan hệ *';
+  const select = document.createElement('select'); select.required = true; select.className = 'relative-relation w-full px-3 py-2 bg-white rounded-lg border border-slate-200 text-sm';
+  [['','-- Chọn --'],['Bố/Mẹ','Bố/Mẹ'],['Vợ/Chồng','Vợ/Chồng'],['Con','Con'],['Anh/Chị/Em','Anh/Chị/Em'],['Khác','Bạn bè / Khác']].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;select.appendChild(o)}); select.value = relation; relWrap.append(relLabel,select); grid.append(nameWrap,relWrap);
+  const remove = document.createElement('button'); remove.type='button'; remove.className='remove-btn absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-xs font-bold'; remove.textContent='×'; remove.setAttribute('aria-label','Xóa người thân'); remove.addEventListener('click',()=>{row.remove(); updateRemoveButtons()}); row.append(grid,remove); relativesContainer.appendChild(row); updateRemoveButtons();
+}
+function updateRemoveButtons(){const rows=[...relativesContainer.querySelectorAll('.relative-row')]; rows.forEach(row=>{const b=row.querySelector('.remove-btn'); b.classList.toggle('hidden',rows.length===1);}); addBtn.disabled=rows.length>=30; addBtn.classList.toggle('opacity-50',addBtn.disabled);}
+function resetForm(){activeAthlete=null; form.reset(); relativesContainer.replaceChildren(); createRelativeRow(); form.classList.add('hidden'); stepLookup.classList.remove('hidden'); cccdInput.value=''; clearMessage();}
+lookupBtn.addEventListener('click', async()=>{
+  clearMessage(); const cccd=cccdInput.value.trim(); if(!/^\d{12}$/.test(cccd)){showMessage('Vui lòng nhập đúng 12 chữ số CCCD.');cccdInput.focus();return;}
+  lookupBtn.disabled=true; lookupBtn.textContent='Đang tra cứu...';
+  try {const data=await jsonp({action:'lookup',cccd}); if(!data.found){showMessage(data.message||'Không tìm thấy VĐV.');return;}
+    activeAthlete={cccd,name:String(data.name||''),dept:String(data.dept||'')}; $('txtAthleteName').textContent=activeAthlete.name; $('txtAthleteDept').textContent=activeAthlete.dept; $('txtAthleteCccd').textContent=cccd.replace(/(\d{4})(\d{4})(\d{4})/,'$1-$2-$3');
+    relativesContainer.replaceChildren(); createRelativeRow(); stepLookup.classList.add('hidden'); form.classList.remove('hidden');
+  } catch(err){showMessage(err.message||'Lỗi kết nối máy chủ.');} finally{lookupBtn.disabled=false;lookupBtn.textContent='Kiểm Tra Thông Tin VĐV';}
 });
-// Xử lý từ chối điều khoản bảo mật
-function cancelPrivacy() {
-alert('Bạn đã từ chối điều khoản bảo mật thông tin. Hệ thống không thể tiếp tục đăng ký người thân.');
-stepPrivacy.classList.add('hidden');
-stepLookup.classList.remove('hidden');
-searchCccd.value = '';
-}
-// Xử lý đồng ý điều khoản bảo mật
-function acceptPrivacy() {
-document.getElementById('txtAthleteName').innerText = activeAthlete.name;
-document.getElementById('txtAthleteDept').innerText = activeAthlete.dept;
-stepPrivacy.classList.add('hidden');
-registrationForm.classList.remove('hidden');
-}
-// Hủy bỏ toàn bộ quá trình điền thông tin người thân
-function cancelRegistration() {
-registrationForm.classList.add('hidden');
-stepLookup.classList.remove('hidden');
-registrationForm.reset();
-searchCccd.value = '';
-relativesContainer.innerHTML = '';
-addRelativeBtn.click();
-}
-// Quản lý các dòng người thân thêm mới
-addRelativeBtn.addEventListener('click', () => {
-const newRow = document.createElement('div');
-newRow.className = 'relative-row bg-slate-50 p-3.5 rounded-xl border border-slate-100 relative group';
-newRow.innerHTML = `
-
-Họ & tên người thân *
-Quan hệ *
--- Chọn --
-Bố/Mẹ
-Vợ/Chồng
-Con
-Anh/Chị/Em
-Bạn bè / Khác
-
-
-
-✕
-`;
-relativesContainer.appendChild(newRow); updateRemoveButtons();
+cccdInput.addEventListener('input',()=>{cccdInput.value=cccdInput.value.replace(/\D/g,'').slice(0,12)});
+addBtn.addEventListener('click',()=>{if(relativesContainer.querySelectorAll('.relative-row').length<30)createRelativeRow();});
+$('btnBack').addEventListener('click',resetForm);
+form.addEventListener('submit',async e=>{
+  e.preventDefault(); clearMessage(); if(!activeAthlete){showMessage('Vui lòng tra cứu CCCD trước.');return;} if(!form.reportValidity())return;
+  const relatives=[...relativesContainer.querySelectorAll('.relative-row')].map(row=>({name:row.querySelector('.relative-name').value.trim(),relation:row.querySelector('.relative-relation').value}));
+  if(!relatives.length||relatives.some(r=>!r.name||!r.relation)){showMessage('Vui lòng nhập đầy đủ họ tên và quan hệ.');return;}
+  const seen=new Set(); for(const r of relatives){const key=(r.name+'|'+r.relation).toLocaleLowerCase('vi');if(seen.has(key)){showMessage('Danh sách có người thân bị trùng: '+r.name);return;}seen.add(key);}
+  const payload=JSON.stringify({cccd:activeAthlete.cccd,relatives}); submitBtn.disabled=true;submitBtn.textContent='Đang cập nhật...';
+  try {const result=await jsonp({action:'register',payload}); if(!result.success)throw new Error(result.message||'Không thể lưu đăng ký.'); showMessage('Đã cập nhật danh sách thành công ('+result.count+' người thân).', 'success'); window.alert('Đã cập nhật danh sách người thân thành công.'); resetForm();}
+  catch(err){showMessage(err.message||'Không thể xác nhận kết quả lưu dữ liệu. Vui lòng thử lại.');}
+  finally{submitBtn.disabled=false;submitBtn.textContent='Xác Nhận Đăng Ký';}
 });
-window.removeRelative = function(btn) { btn.closest('.relative-row').remove(); updateRemoveButtons(); }
-function updateRemoveButtons() {
-const rows = relativesContainer.getElementsByClassName('relative-row');
-const removeButtons = relativesContainer.getElementsByClassName('remove-btn');
-if (rows.length === 1) { removeButtons.classList.add('hidden'); }
-else { for (let btn of removeButtons) { btn.classList.remove('hidden'); } }
-}
-// Đẩy form lưu lên Google Sheet
-registrationForm.addEventListener('submit', (e) => {
-e.preventDefault();
-submitBtn.disabled = true; submitBtn.innerText = 'Đang gửi dữ liệu đăng ký...';
-const relativeRows = relativesContainer.getElementsByClassName('relative-row');
-const relativesData = [];
-for (let row of relativeRows) {
-relativesData.push({ name: row.querySelector('.relative-name').value, relation: row.querySelector('.relative-relation').value });
-}
-fetch(SCRIPT_URL, {
-method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ action: 'register', cccd: activeAthlete.cccd, athleteName: activeAthlete.name, athleteDept: activeAthlete.dept, relatives: relativesData })
-})
-.then(() => {
-alert('Chúc mừng! Đăng ký thông tin người thân thành công.');
-cancelRegistration();
-})
-.catch(() => alert('Có lỗi xảy ra khi kết nối.'))
-.finally(() => { submitBtn.disabled = false; submitBtn.innerText = 'Xác Nhận Đăng Ký'; });
-});
-updateRemoveButtons();
+createRelativeRow();
+</script>
+</body></html>

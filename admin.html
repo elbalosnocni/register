@@ -1,145 +1,26 @@
 <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Quản Trị Hệ Thống - Hội thao Liwayway 2026</title>
-    <script src="https://jsdelivr.net"></script>
-</head>
+<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Quản trị - Hội thao Liwayway 2026</title><script src="https://cdn.tailwindcss.com"></script></head>
 <body class="bg-slate-50 text-slate-800 min-h-screen font-sans py-10">
-
-    <!-- Nút về lại trang chủ -->
-    <div class="absolute top-4 right-4">
-        <a href="index.html" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-semibold px-3 py-1.5 rounded-lg transition shadow-sm">
-            🏠 Về Trang Đăng Ký
-        </a>
-    </div>
-
-    <!-- MÀN HÌNH ĐĂNG NHẬP ADMIN -->
-    <div id="adminLoginView" class="w-full max-w-sm mx-auto px-4 mt-20">
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 space-y-4">
-            <h2 class="text-xl font-bold text-center text-slate-900">🔒 Quản trị hệ thống</h2>
-            <p class="text-xs text-slate-400 text-center">Vui lòng nhập mật khẩu quản trị chuyên dụng</p>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Mật khẩu admin *</label>
-                <input type="password" id="adminPasswordInput" placeholder="Mật khẩu mặc định: Hoadaquy" class="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 outline-none">
-            </div>
-            <button onclick="handleAdminLogin()" id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl transition cursor-pointer">Xác nhận Đăng nhập</button>
-        </div>
-    </div>
-
-    <!-- MÀN HÌNH DASHBOARD TRUNG TÂM -->
-    <div id="adminDashboardView" class="hidden w-full max-w-4xl mx-auto px-4">
-        <header class="mb-6">
-            <h1 class="text-2xl font-black text-slate-900">📊 Hệ Thống Quản Trị Trung Tâm</h1>
-            <p class="text-slate-500 text-sm">Quản lý cấu hình giới hạn thời gian và theo dõi số liệu báo cáo</p>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- CẤU HÌNH THỜI GIAN & BẢO MẬT -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4 h-fit">
-                <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-1.5">⚙️ Cấu hình hệ thống</h3>
-                <div class="space-y-3 text-sm">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1">Hạn đóng khóa đăng ký</label>
-                        <input type="datetime-local" id="configDeadline" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1">Mật khẩu quản trị mới</label>
-                        <input type="password" id="configPassword" placeholder="Để trống nếu không muốn đổi" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <button onclick="saveSystemConfig()" id="btnSaveConfig" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition cursor-pointer">Lưu Thay Đổi</button>
-                </div>
-            </div>
-
-            <!-- HIỂN THỊ THỐNG KÊ BIỂU ĐỒ SỐ LIỆU -->
-            <div class="md:col-span-2 space-y-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-4 rounded-2xl shadow-sm">
-                        <span class="text-xs opacity-80 block font-medium">Tổng số Người Thân cổ vũ</span>
-                        <span id="statTotalRelatives" class="text-3xl font-black block mt-1">0</span>
-                    </div>
-                    <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4 rounded-2xl shadow-sm">
-                        <span class="text-xs opacity-80 block font-medium">Tổng số VĐV đã bảo lãnh</span>
-                        <span id="statTotalAthletes" class="text-3xl font-black block mt-1">0</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
-                    <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-3 mb-3">🏢 Phân bổ số lượng người thân theo Bộ phận</h3>
-                    <div id="deptStatsContainer" class="space-y-2 text-sm divide-y divide-slate-50">
-                        <!-- Tự động cập nhật bằng script -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ĐIỀN LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY (GIỐNG LINK TRANG INDEX)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ_E3CP4x0j8t4EGfSws34cn4vN5y4qsfibUGTpE2zvutdj2biQdCyfw2EW2QopxP8sg/exec';
-        let currentAdminPassword = '';
-
-        // Xử lý đăng nhập Admin
-        function handleAdminLogin() {
-            const pwd = document.getElementById('adminPasswordInput').value.trim();
-            if(!pwd) { alert('Vui lòng điền mật khẩu quản trị!'); return; }
-
-            const loginBtn = document.getElementById('loginBtn');
-            loginBtn.disabled = true; loginBtn.innerText = 'Đang kiểm tra bảo mật...';
-
-            fetch(`${SCRIPT_URL}?action=adminLogin&password=${encodeURIComponent(pwd)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success) {
-                        currentAdminPassword = pwd;
-                        document.getElementById('configDeadline').value = data.deadline;
-                        document.getElementById('statTotalRelatives').innerText = data.stats.totalRelatives;
-                        document.getElementById('statTotalAthletes').innerText = data.stats.totalAthletes;
-                        
-                        const container = document.getElementById('deptStatsContainer');
-                        container.innerHTML = '';
-                        if (Object.keys(data.stats.deptStats).length === 0) {
-                            container.innerHTML = `<p class="text-slate-400 italic py-2 text-center">Chưa ghi nhận dữ liệu đăng ký.</p>`;
-                        } else {
-                            for (const [dept, count] of Object.entries(data.stats.deptStats)) {
-                                container.innerHTML += `<div class="flex justify-between py-2.5">
-                                    <span class="font-medium text-slate-700">${dept}</span>
-                                    <span class="bg-slate-100 text-slate-800 font-bold px-3 py-0.5 rounded-full text-xs">${count} người thân</span>
-                                </div>`;
-                            }
-                        }
-                        // Chuyển đổi màn hình ẩn form đăng nhập hiện Dashboard
-                        document.getElementById('adminLoginView').classList.add('hidden');
-                        document.getElementById('adminDashboardView').classList.remove('hidden');
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(() => alert('Lỗi tải dữ liệu quản trị từ Google Sheets!'))
-                .finally(() => { loginBtn.disabled = false; loginBtn.innerText = 'Xác nhận Đăng nhập'; });
-        }
-
-        // Xử lý lưu cấu hình thời gian và mật khẩu mới
-        function saveSystemConfig() {
-            const newDeadline = document.getElementById('configDeadline').value;
-            const newPassword = document.getElementById('configPassword').value.trim();
-            const btn = document.getElementById('btnSaveConfig');
-
-            btn.disabled = true; btn.innerText = 'Đang tiến hành lưu...';
-
-            fetch(SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'updateConfig', adminPassword: currentAdminPassword, newDeadline: newDeadline, newPassword: newPassword })
-            })
-            .then(() => {
-                alert('Cấu hình hệ thống đã cập nhật thành công!');
-                if(newPassword) currentAdminPassword = newPassword; 
-                document.getElementById('configPassword').value = '';
-            })
-            .catch(() => alert('Gặp lỗi kết nối khi lưu dữ liệu!'))
-            .finally(() => { btn.disabled = false; btn.innerText = 'Lưu Thay Đổi'; });
-        }
-    </script>
-</body>
-</html>
+  <div class="fixed top-4 right-4 flex gap-2"><a href="index.html" class="text-xs bg-slate-900 text-white font-semibold px-3 py-2 rounded-lg">🏠 Trang đăng ký</a><button id="logoutBtn" class="hidden text-xs bg-white border px-3 py-2 rounded-lg">Đăng xuất</button></div>
+  <main class="w-full max-w-5xl mx-auto px-4 pt-12">
+    <div id="statusMessage" role="status" aria-live="polite" class="hidden mb-4 rounded-xl p-3 text-sm"></div>
+    <section id="adminLoginView" class="max-w-sm mx-auto bg-white rounded-2xl shadow-xl border p-6 space-y-4"><h1 class="text-xl font-bold text-center">🔒 Quản trị hệ thống</h1><p class="text-xs text-slate-500 text-center">Đăng nhập bằng mật khẩu Admin đã thiết lập trong Apps Script.</p><form id="loginForm" class="space-y-3"><label class="block text-sm font-medium" for="adminPasswordInput">Mật khẩu Admin</label><input type="password" id="adminPasswordInput" autocomplete="current-password" required class="w-full px-4 py-3 border rounded-xl" placeholder="Nhập mật khẩu quản trị"><button id="loginBtn" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl">Đăng nhập</button></form><p class="text-xs text-slate-400">Nếu Admin chưa được khởi tạo, chủ dự án cần chạy hàm <code>setupAdminPassword()</code> trong Apps Script Editor.</p></section>
+    <section id="adminDashboardView" class="hidden space-y-6"><header><h1 class="text-2xl font-black">📊 Hệ Thống Quản Trị</h1><p class="text-slate-500 text-sm">Quản lý hạn đăng ký, mật khẩu và số liệu người thân cổ vũ.</p></header>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><section class="bg-white p-5 rounded-2xl border shadow-sm space-y-4"><h2 class="font-bold border-b pb-2">⚙️ Cấu hình hệ thống</h2><form id="configForm" class="space-y-3"><div><label for="configDeadline" class="block text-xs font-semibold text-slate-500 mb-1">Hạn đóng đăng ký (để trống = không giới hạn)</label><input type="datetime-local" id="configDeadline" class="w-full px-3 py-2 border rounded-lg"></div><div><label for="configPassword" class="block text-xs font-semibold text-slate-500 mb-1">Mật khẩu quản trị mới</label><input type="password" id="configPassword" minlength="8" autocomplete="new-password" placeholder="Ít nhất 8 ký tự" class="w-full px-3 py-2 border rounded-lg"></div><button id="btnSaveConfig" class="w-full bg-blue-600 text-white text-sm font-bold py-2.5 rounded-lg">Lưu thay đổi</button></form><p class="text-xs text-slate-400">Mật khẩu mới chỉ được lưu dưới dạng SHA-256 trong Script Properties.</p><button id="refreshBtn" class="w-full border text-sm font-semibold py-2 rounded-lg">Làm mới thống kê</button></section>
+      <div class="md:col-span-2 space-y-6"><div class="grid grid-cols-2 gap-4"><div class="bg-gradient-to-br from-indigo-500 to-blue-600 text-white p-5 rounded-2xl"><span class="text-xs opacity-90">Tổng người thân</span><strong id="statTotalRelatives" class="text-3xl block mt-1">0</strong></div><div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 rounded-2xl"><span class="text-xs opacity-90">VĐV đã đăng ký</span><strong id="statTotalAthletes" class="text-3xl block mt-1">0</strong></div></div><section class="bg-white p-5 rounded-2xl border shadow-sm"><h2 class="font-bold border-b pb-3 mb-2">🏢 Người thân theo bộ phận</h2><div id="deptStatsContainer" class="divide-y divide-slate-100"></div></section></div></div>
+    </section>
+    <p class="text-xs text-slate-400 text-center mt-8">Bảo mật: chỉ chia sẻ trang quản trị với người được phép. Mật khẩu mặc định cần được đổi ngay sau khi đăng nhập lần đầu.</p>
+  </main>
+<script>
+'use strict';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyQ_E3CP4x0j8t4EGfSws34cn4vN5y4qsfibUGTpE2zvutdj2biQdCyfw2EW2QopxP8sg/exec';
+let currentAdminPassword=''; const $=id=>document.getElementById(id);
+function showMessage(message,type='error'){const el=$('statusMessage');el.textContent=message;el.className='mb-4 rounded-xl p-3 text-sm '+(type==='success'?'bg-emerald-50 text-emerald-800':type==='info'?'bg-blue-50 text-blue-800':'bg-red-50 text-red-800');}
+function jsonp(params,timeoutMs=20000){return new Promise((resolve,reject)=>{const cb='__admin_cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);const script=document.createElement('script');let settled=false;const query=new URLSearchParams({...params,callback:cb});const cleanup=()=>{delete window[cb];script.remove();clearTimeout(timer)};const timer=setTimeout(()=>{if(!settled){settled=true;cleanup();reject(new Error('Máy chủ phản hồi quá thời gian.'))}},timeoutMs);window[cb]=data=>{if(settled)return;settled=true;cleanup();resolve(data)};script.onerror=()=>{if(!settled){settled=true;cleanup();reject(new Error('Không kết nối được Google Apps Script.'))}};script.src=SCRIPT_URL+'?'+query.toString();document.head.appendChild(script)});}
+function renderStats(stats){$('statTotalRelatives').textContent=Number(stats.totalRelatives||0).toLocaleString('vi-VN');$('statTotalAthletes').textContent=Number(stats.totalAthletes||0).toLocaleString('vi-VN');const container=$('deptStatsContainer');container.replaceChildren();const entries=Object.entries(stats.deptStats||{}).sort((a,b)=>a[0].localeCompare(b[0],'vi'));if(!entries.length){const p=document.createElement('p');p.className='text-slate-400 italic py-3 text-center';p.textContent='Chưa ghi nhận dữ liệu đăng ký.';container.appendChild(p);return;}entries.forEach(([dept,count])=>{const row=document.createElement('div');row.className='flex justify-between items-center gap-3 py-3';const label=document.createElement('span');label.className='font-medium';label.textContent=dept;const value=document.createElement('span');value.className='bg-slate-100 font-bold px-3 py-1 rounded-full text-xs whitespace-nowrap';value.textContent=Number(count).toLocaleString('vi-VN')+' người thân';row.append(label,value);container.appendChild(row)});}
+async function loadDashboard(){const data=await jsonp({action:'adminLogin',password:currentAdminPassword});if(!data.success)throw new Error(data.message||'Phiên quản trị không hợp lệ.');$('configDeadline').value=data.deadline||'';renderStats(data.stats||{});}
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('loginBtn');btn.disabled=true;btn.textContent='Đang xác thực...';try{const pwd=$('adminPasswordInput').value;const data=await jsonp({action:'adminLogin',password:pwd});if(!data.success)throw new Error(data.message||'Đăng nhập không thành công.');currentAdminPassword=pwd;$('adminLoginView').classList.add('hidden');$('adminDashboardView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');$('configDeadline').value=data.deadline||'';renderStats(data.stats||{});$('adminPasswordInput').value='';showMessage('Đăng nhập quản trị thành công. Hãy đổi mật khẩu mặc định nếu chưa đổi.','success');}catch(err){showMessage(err.message||'Lỗi đăng nhập.')}finally{btn.disabled=false;btn.textContent='Đăng nhập';}});
+$('configForm').addEventListener('submit',async e=>{e.preventDefault();const btn=$('btnSaveConfig');const newPassword=$('configPassword').value;if(newPassword&&newPassword.length<8){showMessage('Mật khẩu mới phải có ít nhất 8 ký tự.');return;}btn.disabled=true;btn.textContent='Đang lưu...';try{const data=await jsonp({action:'updateConfig',adminPassword:currentAdminPassword,newDeadline:$('configDeadline').value,newPassword});if(!data.success)throw new Error(data.message||'Không thể lưu cấu hình.');if(newPassword)currentAdminPassword=newPassword;$('configPassword').value='';showMessage(data.message||'Đã lưu cấu hình thành công.','success');await loadDashboard();}catch(err){showMessage(err.message||'Không thể lưu cấu hình.')}finally{btn.disabled=false;btn.textContent='Lưu thay đổi';}});
+$('refreshBtn').addEventListener('click',async()=>{const btn=$('refreshBtn');btn.disabled=true;try{await loadDashboard();showMessage('Đã làm mới thống kê.','success')}catch(err){showMessage(err.message)}finally{btn.disabled=false}});
+$('logoutBtn').addEventListener('click',()=>{currentAdminPassword='';$('adminDashboardView').classList.add('hidden');$('adminLoginView').classList.remove('hidden');$('logoutBtn').classList.add('hidden');$('adminPasswordInput').value='';showMessage('Đã đăng xuất.','info')});
+</script></body></html>
